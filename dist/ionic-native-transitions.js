@@ -437,14 +437,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	            delete options.type;
 	            $rootScope.$broadcast('ionicNativeTransitions.beforeTransition');
 	
-	            var me = this;
-	            window.plugins.nativepagetransitions[type](options, function () {
-	                transitionSuccess.bind(me, getTransitionDuration(options))();
-	                defer.resolve();
-	            }, function () {
-	                transitionError.bind(me, getTransitionDuration(options))();
-	                defer.reject();
-	            });
+	            var execTransition = function execTransition() {
+	                var me = this;
+	                window.plugins.nativepagetransitions[type](options, function () {
+	                    transitionSuccess.bind(me, getTransitionDuration(options))();
+	                    defer.resolve();
+	                }, function () {
+	                    transitionError.bind(me, getTransitionDuration(options))();
+	                    defer.reject();
+	                });
+	            };
+	
+	            if (window.cordova && window.cordova.plugins.Keyboard && window.cordova.plugins.Keyboard.isVisible) {
+	
+	                var onHideKeyboard = function onHideKeyboard() {
+	                    execTransition();
+	                    window.removeEventListener('native.keyboardhide', onHideKeyboard);
+	                };
+	                window.addEventListener('native.keyboardhide', onHideKeyboard);
+	            } else {
+	                execTransition();
+	            }
 	
 	            return defer.promise;
 	        }
