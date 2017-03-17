@@ -451,7 +451,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (window.cordova && window.cordova.plugins.Keyboard && window.cordova.plugins.Keyboard.isVisible) {
 	
 	                var onHideKeyboard = function onHideKeyboard() {
-	                    execTransition();
+	                    window.setTimeout(execTransition, 250);
 	                    window.removeEventListener('native.keyboardhide', onHideKeyboard);
 	                };
 	                window.addEventListener('native.keyboardhide', onHideKeyboard);
